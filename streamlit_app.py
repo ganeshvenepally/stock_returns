@@ -3,42 +3,40 @@ import yfinance as yf
 import pandas as pd
 
 
+import streamlit as st
+
 def process_stock_names_India(data):
     lines = data.split("\n")
-    stock_names = [line.replace("BSE:", "") + ".BO" for line in lines if "BSE:" in line and not line.startswith("BSE:5")]
+    # Exclude lines that start with "BSE:5" and process the rest
+    stock_names = {line.replace("BSE:", "") + ".BO" for line in lines if "BSE:" in line and not line.startswith("BSE:5")}
     return ", ".join(stock_names)
 
-def process_stock_names_US(data):
-    lines = data.split("\n")
-    stock_names = [line.replace("NYSE:", "").replace("NASDAQ:", "") for line in lines if "NYSE:" in line or "NASDAQ:" in line]
-    return ", ".join(stock_names)
-
-# For India Stocks
 st.title('Stock Name Processor India')
-st.write('Input stock data in the provided format and get processed stock names for India.')
+st.write('Input stock data in the provided format and get processed stock names.')
 
+# User input
 data_India = st.text_area("Enter stock data for India:")
 
 if st.button('Process Stock Names for India'):
     processed_names_India = process_stock_names_India(data_India)
     st.write(processed_names_India)
 
-# For US Stocks
-st.title('Stock Name Processor US')
-st.write('Input stock data in the provided format and get processed stock names for US.')
+def process_stock_names_US(data):
+    lines = data.split("\n")
+    # Extract tickers that start with "NYSE:" or "NASDAQ:" and process the rest
+    stock_names = {line.replace("NYSE:", "").replace("NASDAQ:", "") for line in lines if "NYSE:" in line or "NASDAQ:" in line}
+    return ", ".join(stock_names)
 
+st.title('Stock Name Processor US')
+st.write('Input stock data in the provided format and get processed stock names.')
+
+# User input
 data_US = st.text_area("Enter stock data for US:")
 
 if st.button('Process Stock Names for US'):
     processed_names_US = process_stock_names_US(data_US)
     st.write(processed_names_US)
 
-# User input
-data = st.text_area("Enter stock data:")
-
-if st.button('Process Stock Names'):
-    processed_names_US = process_stock_names_US(data)
-    st.write(processed_names_US)
 
 def get_total_return_for_multiple_stocks(stock_list, start_date, end_date):
     results = []
