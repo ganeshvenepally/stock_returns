@@ -9,8 +9,10 @@ def get_daily_return_for_multiple_stocks(stock_list, start_date):
 
     for stock_name in stock_list:
         data = yf.download(stock_name, start=start_date, end=end_date)
-        if data.empty:
-            results.append([stock_name, "No data available"] + [None]*5)
+        
+        # Ensure we have 5 days of data
+        if len(data) != 5:
+            results.append([stock_name] + ["No data available"]*5)
             continue
 
         data['Returns'] = data['Close'].pct_change().fillna(0)
