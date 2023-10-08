@@ -1,6 +1,8 @@
 import streamlit as st
 import yfinance as yf
+import pandas as pd
 from datetime import datetime, timedelta
+import io
 
 def get_total_return_for_multiple_stocks(stock_list, start_date):
     end_date = (datetime.strptime(start_date, '%Y-%m-%d') + timedelta(days=5)).strftime('%Y-%m-%d')
@@ -9,12 +11,12 @@ def get_total_return_for_multiple_stocks(stock_list, start_date):
     for stock_name in stock_list:
         data = yf.download(stock_name, start=start_date, end=end_date)
         if data.empty:
-            results.append(f"No data available for {stock_name} between {start_date} and {end_date}.")
+            results.append([start_date, end_date, stock_name, "No data available"])
             continue
 
         data['Returns'] = data['Close'].pct_change().fillna(0)
         total_return = (data['Returns'] + 1).prod() - 1
-        results.append(f"Total return for {stock_name} between {start_date} and {end_date}: {total_return:.2%}")
+        results.append([start_date, end_date, stock_name, f"{total_return:.2%}"])
 
     return results
 
@@ -28,5 +30,12 @@ start_date = st.date_input("Enter the start date:")
 if st.button('Calculate Returns'):
     stock_list = [stock.strip() for stock in stock_names.split(',')]
     results = get_total_return_for_multiple_stocks(stock_list, start_date.strftime('%Y-%m-%d'))
-    for result in results:
-        st.write(result)
+    
+    # Convert results to DataFrame
+    df = pd.DataFrame(results, columns=["Start Date", "End Date", "Stock Name", "Returns"])
+    
+    # Convert DataFrame to CSV and let the user download it
+    csv = df.to_csv(index=False)
+    b64 = base64.b64encode(csv.encode()).decode()
+    href = f'<a href="data:file/csv;base64,{b64}" download="stock_returns.csv">Download CSV File</a>'
+    st.markdown(href, unsafe_allow_html=True)
