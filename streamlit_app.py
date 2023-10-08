@@ -37,7 +37,6 @@ if st.button('Process Stock Names for US'):
     processed_names_US = process_stock_names_US(data_US)
     st.write(processed_names_US)
 
-
 def get_total_return_for_multiple_stocks(stock_list, start_date, end_date):
     results = []
 
