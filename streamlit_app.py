@@ -27,6 +27,9 @@ def get_total_return_for_multiple_stocks(stock_list, start_date):
 st.title('Stock Returns Calculator')
 st.write('Input stock data in the provided format, get processed stock names, and calculate total returns for the next 5 days from the provided start date.')
 
+# Initialize processed_names as an empty list
+processed_names = []
+
 # Stock name processor
 data = st.text_area("Enter stock data:")
 if st.button('Process Stock Names'):
@@ -36,8 +39,7 @@ if st.button('Process Stock Names'):
 # Stock returns calculator
 start_date = st.date_input("Enter the start date:")
 if st.button('Calculate Returns'):
-    stock_list = processed_names
-    results = get_total_return_for_multiple_stocks(stock_list, start_date.strftime('%Y-%m-%d'))
+    results = get_total_return_for_multiple_stocks(processed_names, start_date.strftime('%Y-%m-%d'))
     
     # Convert results to DataFrame for display in Streamlit
     df = pd.DataFrame(results, columns=["Start Date", "End Date", "Stock Name", "Returns"])
