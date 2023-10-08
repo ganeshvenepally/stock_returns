@@ -34,13 +34,16 @@ processed_names = []
 data = st.text_area("Enter stock data:")
 if st.button('Process Stock Names'):
     processed_names = process_stock_names(data)
-    st.write(", ".join(processed_names))
+    st.write("Processed Stock Names:", ", ".join(processed_names))
 
 # Stock returns calculator
 start_date = st.date_input("Enter the start date:")
 if st.button('Calculate Returns'):
     results = get_total_return_for_multiple_stocks(processed_names, start_date.strftime('%Y-%m-%d'))
     
-    # Convert results to DataFrame for display in Streamlit
-    df = pd.DataFrame(results, columns=["Start Date", "End Date", "Stock Name", "Returns"])
-    st.table(df)
+    if not results:
+        st.write("No data available for the provided stocks and date range.")
+    else:
+        # Convert results to DataFrame for display in Streamlit
+        df = pd.DataFrame(results, columns=["Start Date", "End Date", "Stock Name", "Returns"])
+        st.table(df)
