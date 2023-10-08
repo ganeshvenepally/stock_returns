@@ -22,13 +22,16 @@ def get_total_return_for_multiple_stocks(stock_list, start_date, end_date):
     results = []
 
     for stock_name in stock_list:
-        data = yf.download(stock_name, start=start_date, end=end_date)
-        if data.empty:
-            results.append([start_date, end_date, stock_name, "No data available"])
-            continue
+        try:
+            data = yf.download(stock_name, start=start_date, end=end_date)
+            if data.empty:
+                results.append([start_date, end_date, stock_name, "No data available"])
+                continue
 
-        total_return = ((data['Close'].iloc[-1] - data['Open'].iloc[0]) / data['Open'].iloc[0]) * 100
-        results.append([start_date, end_date, stock_name, f"{total_return:.2f}%"])
+            total_return = ((data['Close'].iloc[-1] - data['Open'].iloc[0]) / data['Open'].iloc[0]) * 100
+            results.append([start_date, end_date, stock_name, f"{total_return:.2f}%"])
+        except Exception as e:
+            results.append([start_date, end_date, stock_name, f"Error: {e}"])
 
     return results
 
