@@ -3,6 +3,7 @@ import warnings
 import yfinance as yf
 import quantstats as qs
 import os
+import pandas as pd
 
 # Suppress all warnings
 warnings.filterwarnings('ignore')
