@@ -36,18 +36,22 @@ if st.button('Generate Report'):
         # Generate the QuantStats report and save it to an HTML file
         report_file_path = f'{stock_symbol}_quantstats_report.html'
         
-        # Disable the progress bar when downloading benchmark data
+        # Try to generate the report without comparing to a benchmark to avoid the BrokenPipeError
         try:
-            qs.reports.html(stock_data['Adj Close'], benchmark='SPY', output=report_file_path, download_benchmark=False)
+            qs.reports.html(stock_data['Adj Close'], output=report_file_path)
         except Exception as e:
             st.error(f"Error generating report: {str(e)}")
+            report_file_path = None  # Ensure the path is None if report generation failed
         
-        # Notify the user and display a link to download the report
-        st.success(f'Report saved to {report_file_path}')
-        with open(report_file_path, 'rb') as f:
-            st.download_button('Download Report', f, file_name=os.path.basename(report_file_path))
+        # Check if the report was successfully generated and exists before displaying the download button
+        if report_file_path and os.path.exists(report_file_path):
+            st.success(f'Report saved to {report_file_path}')
+            with open(report_file_path, 'rb') as f:
+                st.download_button('Download Report', f, file_name=os.path.basename(report_file_path))
+        else:
+            st.error(f"Report generation failed or the file was not found.")
     else:
         st.error(f'No data found for {stock_symbol} in the selected date range.')
 
 # Note for the user
-st.write("This app generates a full QuantStats report, comparing the stock's performance to the S&P 500 benchmark.")
+st.write("This app generates a full QuantStats report for the selected stock.")
