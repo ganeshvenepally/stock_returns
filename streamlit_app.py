@@ -17,13 +17,13 @@ stock_symbol = st.text_input('Enter Stock Symbol (e.g., 0P0000XW4J.BO)', '0P0000
 
 # Date inputs for start and end date
 start_date = st.date_input('Start Date', value=pd.to_datetime('2000-06-01'))
-end_date = st.date_input('End Date', value=pd.to_datetime('2010-12-31'))
+end_date = st.date_input('End Date', value=pd.to_datetime('2024-12-31'))
 
 # Button to generate the report
 if st.button('Generate Report'):
-    # Download historical data for the selected stock
+    # Download historical data for the selected stock with progress bar disabled
     st.write(f"Downloading data for {stock_symbol} from {start_date} to {end_date}...")
-    stock_data = yf.download(stock_symbol, start=start_date, end=end_date)
+    stock_data = yf.download(stock_symbol, start=start_date, end=end_date, progress=False)
     
     if not stock_data.empty:
         # Extend pandas with QuantStats functions
