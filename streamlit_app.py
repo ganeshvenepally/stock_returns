@@ -9,6 +9,9 @@ from datetime import datetime
 # Suppress all warnings
 warnings.filterwarnings('ignore')
 
+st.experimental_singleton.clear()
+
+
 # Streamlit app title and description
 st.title('QuantStats Report Generator')
 st.write('This app generates a QuantStats report for a selected stock.')
