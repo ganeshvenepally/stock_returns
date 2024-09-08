@@ -38,4 +38,16 @@ if st.button('Generate Report'):
         
         # Disable the progress bar when downloading benchmark data
         try:
-            qs.reports.html(stock_data['Adj Close'], benchmark='SPY', ou
+            qs.reports.html(stock_data['Adj Close'], benchmark='SPY', output=report_file_path, download_benchmark=False)
+        except Exception as e:
+            st.error(f"Error generating report: {str(e)}")
+        
+        # Notify the user and display a link to download the report
+        st.success(f'Report saved to {report_file_path}')
+        with open(report_file_path, 'rb') as f:
+            st.download_button('Download Report', f, file_name=os.path.basename(report_file_path))
+    else:
+        st.error(f'No data found for {stock_symbol} in the selected date range.')
+
+# Note for the user
+st.write("This app generates a full QuantStats report, comparing the stock's performance to the S&P 500 benchmark.")
